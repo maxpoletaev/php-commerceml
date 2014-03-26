@@ -1,0 +1,21 @@
+{
+    "name": "zenwalker/commerceml",
+    "type": "library",
+    "homepage": "https://github.com/zenwalker/php-commerceml",
+    "description": "Library for parsing CommerceML files",
+    "keywords": ["commerceml", "1c"],
+    "license": "MIT",
+    "authors": [
+        {
+            "homepage": "http://zenwalker.ru",
+            "name": "Maxim Shkalin",
+            "email": "dt5@bk.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Zenwalker\\CommerceML\\": "src/"}
+    },
+    "require": {
+
+    }
+}
