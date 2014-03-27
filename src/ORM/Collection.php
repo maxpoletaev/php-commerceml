@@ -101,7 +101,8 @@ class Collection
             }
         }
 
-        return new self($result);
+        $called = get_called_class();
+        return new $called($result);
     }
 
     /**
@@ -166,6 +167,8 @@ class Collection
         if (method_exists($this, $attachMethod)) {
             $this->{$attachMethod}($collection);
         }
+
+        $this->{$attachMethod}($collection);
     }
 
     /**

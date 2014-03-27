@@ -1,6 +1,7 @@
 <?php namespace Zenwalker\CommerceML;
 
-use Zenwalker\CommerceML\ORM\Collection;
+use Zenwalker\CommerceML\Model\Property;
+use Zenwalker\CommerceML\Model\PropertyCollection;
 
 use Zenwalker\CommerceML\Model\Category;
 use Zenwalker\CommerceML\Model\CategoryCollection;
@@ -10,6 +11,7 @@ use Zenwalker\CommerceML\Model\ProductCollection;
 
 use Zenwalker\CommerceML\Model\PriceType;
 use Zenwalker\CommerceML\Model\PriceTypeCollection;
+
 
 class CommerceML {
 
@@ -30,7 +32,8 @@ class CommerceML {
         $this->collections = array(
             'category'  => new CategoryCollection(),
             'product'   => new ProductCollection(),
-            'priceType' => new PriceTypeCollection()
+            'priceType' => new PriceTypeCollection(),
+            'property'  => new PropertyCollection()
         );
     }
 
@@ -46,19 +49,26 @@ class CommerceML {
 
         if ($importXml) {
             $importXml = $this->loadXml($importXml);
-            foreach($importXml->Каталог->Товары->Товар as $product) {
-                $productId = (string) $product->Ид;
-                $buffer['products'][$productId]['import'] = $product;
+
+            if ($importXml->Каталог->Товары) {
+                foreach($importXml->Каталог->Товары->Товар as $product) {
+                    $productId = (string) $product->Ид;
+                    $buffer['products'][$productId]['import'] = $product;
+                }
             }
 
             $this->parseCategories($importXml);
+            $this->parseProperties($importXml);
         }
 
         if ($offersXml) {
             $offersXml = $this->loadXml($offersXml);
-            foreach ($offersXml->ПакетПредложений->Предложения->Предложение as $offer) {
-                $productId = (string) $offer->Ид;
-                $buffer['products'][$productId]['offer'] = $offer;
+
+            if ($offersXml->ПакетПредложений->Предложения) {
+                foreach ($offersXml->ПакетПредложений->Предложения->Предложение as $offer) {
+                    $productId = (string) $offer->Ид;
+                    $buffer['products'][$productId]['offer'] = $offer;
+                }
             }
 
             $this->parsePriceTypes($offersXml);
@@ -129,6 +139,21 @@ class CommerceML {
     }
 
     /**
+     * @param SimpleXMLElement $importXml
+     * @return void
+     */
+    public function parseProperties($importXml)
+    {
+        if ($importXml->Классификатор->Свойства) {
+            foreach ($importXml->Классификатор->Свойства->Свойство as $xmlProperty) {
+                $property = new Property($xmlProperty);
+                $this->collections['property']->add($property);
+            }
+
+        }
+    }
+
+    /**
      * Get categories.
      *
      * @param array [$attach]
@@ -155,7 +180,7 @@ class CommerceML {
      */
     public function getProducts($attach = array())
     {
-        $products = $this->collections['product']->filter('quantity', '>', 200);
+        $products = $this->collections['product'];
 
         foreach ($attach as $collection) {
             if (isset($this->collections[$collection])) {

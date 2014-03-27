@@ -19,4 +19,21 @@ class ProductCollection extends Collection
             }
         }
     }
+
+    /**
+     * Translate properties id to string.
+     *
+     * @param PropertyCollection $propertyCollection
+     * @return void
+     */
+    public function attachPropertyCollection($propertyCollection)
+    {
+        foreach ($this->fetch() as $product) {
+            foreach($product->properties as $propId => &$value) {
+                $value['value'] = $propertyCollection->getValue($propId, $value['valueId']);
+                $value['name'] = $propertyCollection->getName($propId);
+            }
+        }
+    }
+
 }

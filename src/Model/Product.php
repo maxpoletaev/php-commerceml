@@ -35,6 +35,16 @@ class Product extends Model
     public $categories = array();
 
     /**
+     * @var array $requisites
+     */
+    public $requisites = array();
+
+    /**
+     * @var array $properties
+     */
+    public $properties = array();
+
+    /**
      * Class constructor.
      *
      * @param string [$importXml]
@@ -73,6 +83,23 @@ class Product extends Model
             foreach ($xml->Группы->Ид as $categoryId) {
                 $this->categories[] = (string) $categoryId;
            }
+        }
+
+        if ($xml->ЗначенияРеквизитов) {
+            foreach ($xml->ЗначенияРеквизитов->ЗначениеРеквизита as $value) {
+                $name = (string) $value->Наименование;
+                $this->requisites[$name] = (string) $value->Значение;
+            }
+        }
+
+        if ($xml->ЗначенияСвойств) {
+            foreach ($xml->ЗначенияСвойств->ЗначенияСвойства as $prop) {
+                $id = (string) $prop->Ид;
+
+                $this->properties[$id] = array(
+                    'valueId' => (string) $prop->Значение
+                );
+            }
         }
     }
 
