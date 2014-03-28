@@ -10,21 +10,6 @@ abstract class Model
     public $id;
 
     /**
-     * Return null if property is not extsts.
-     *
-     * @param string $key
-     * @return mixed|null
-     */
-    public function __get($key)
-    {
-        if (property_exists($this, $key)) {
-            return $this->{$key};
-        }
-
-        return null;
-    }
-
-    /**
      * Load model data form array.
      *
      * @param array $arr
