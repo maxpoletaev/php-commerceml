@@ -62,7 +62,8 @@ class Category extends Model
      * @param Collection $products
      * @return void
      */
-    public function attachProducts($products) {
+    public function attachProducts($products)
+    {
         $this->products = array();
         foreach ($products->fetch() as $product) {
             if (array_key_exists($this->id, $product->categories)) {
