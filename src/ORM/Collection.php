@@ -21,7 +21,7 @@ class Collection
     /**
      * Add item to collection.
      *
-     * @param array|object $item 
+     * @param array|object $item
      * @param string $key
      * @return Collection
      */
@@ -29,7 +29,7 @@ class Collection
     {
         if (is_array($item)) {
             foreach ($item as $i) {
-                $this->add($i);
+                $this->add($i, $key);
             }
         }
         else {
@@ -48,7 +48,7 @@ class Collection
      *
      * @param string $key
      * @param mixed $val
-     * @return array
+     * @return Collection
      */
     public function filter($key, $condition, $val)
     {
