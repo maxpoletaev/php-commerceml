@@ -93,7 +93,7 @@ class CommerceML
         }
 
         foreach ($buffer['products'] as $item) {
-            $import = $item['import'];
+            $import = isset($item['import']) ? $item['import'] : null;
             $offer  = isset($item['offer']) ? $item['offer'] : null;
 
             $product = new Product($import, $offer);
