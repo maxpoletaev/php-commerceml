@@ -44,17 +44,9 @@ class CommerceML
      */
     public function addXmls($importXml = false, $offersXml = false)
     {
-        $buffer = [];
 
         if ($importXml) {
             $importXml = $this->loadXml($importXml);
-
-            if ($importXml->Каталог->Товары) {
-                foreach ($importXml->Каталог->Товары->Товар as $product) {
-                    $productId                                = (string)$product->Ид;
-                    $buffer['products'][$productId]['import'] = $product;
-                }
-            }
 
             $this->parseCategories($importXml);
             $this->parseProperties($importXml);
@@ -63,28 +55,43 @@ class CommerceML
         if ($offersXml) {
             $offersXml = $this->loadXml($offersXml);
 
+            $this->parsePriceTypes($offersXml);
+        }
+
+        $this->parseProducts($importXml, $offersXml);
+    }
+
+    /**
+     * Parse products.
+     *
+     *
+     * @param bool|\SimpleXMLElement $importXml
+     * @param bool|\SimpleXMLElement $offersXml
+     */
+    public function parseProducts($importXml = false, $offersXml = false)
+    {
+        $buffer = [
+            'products' => []
+        ];
+
+        if ($importXml) {
+            if ($importXml->Каталог->Товары) {
+                foreach ($importXml->Каталог->Товары->Товар as $product) {
+                    $productId                                = (string)$product->Ид;
+                    $buffer['products'][$productId]['import'] = $product;
+                }
+            }
+        }
+
+        if ($offersXml) {
             if ($offersXml->ПакетПредложений->Предложения) {
                 foreach ($offersXml->ПакетПредложений->Предложения->Предложение as $offer) {
                     $productId                               = (string)$offer->Ид;
                     $buffer['products'][$productId]['offer'] = $offer;
                 }
             }
-
-            $this->parsePriceTypes($offersXml);
         }
 
-        $this->parseProducts($buffer);
-    }
-
-    /**
-     * Parse products.
-     *
-     * @param array $buffer
-     *
-     * @return void
-     */
-    public function parseProducts($buffer)
-    {
         foreach ($buffer['products'] as $item) {
             $import = $item['import'];
             $offer  = isset($item['offer']) ? $item['offer'] : null;
